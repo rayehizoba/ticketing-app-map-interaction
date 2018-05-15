@@ -21,8 +21,8 @@ const Images = [
 
 const { width, height } = Dimensions.get("window");
 
-const CARD_HEIGHT = height / 4;
-const CARD_WIDTH = CARD_HEIGHT - 50;
+const CARD_HEIGHT = height / 3.75;
+const CARD_WIDTH = CARD_HEIGHT * 1.25;
 
 export default class screens extends Component {
   state = {
@@ -115,15 +115,20 @@ export default class screens extends Component {
       ];
       const scale = this.animation.interpolate({
         inputRange,
-        outputRange: [1, 2.5, 1],
+        outputRange: [1, 1.5, 1],
         extrapolate: "clamp",
       });
       const opacity = this.animation.interpolate({
         inputRange,
-        outputRange: [0.35, 1, 0.35],
+        outputRange: [0.75, 1, 0.75],
         extrapolate: "clamp",
       });
-      return { scale, opacity };
+      const colorOpacity = this.animation.interpolate({
+        inputRange,
+        outputRange: [0, 1, 0],
+        extrapolate: "clamp",
+      });
+      return { scale, opacity, colorOpacity };
     });
 
     return (
@@ -144,11 +149,15 @@ export default class screens extends Component {
             const opacityStyle = {
               opacity: interpolations[index].opacity,
             };
+            const colorOpacityStyle = {
+              opacity: interpolations[index].colorOpacity,
+            };
             return (
               <MapView.Marker key={index} coordinate={marker.coordinate}>
                 <Animated.View style={[styles.markerWrap, opacityStyle]}>
                   <Animated.View style={[styles.ring, scaleStyle]} />
-                  <View style={styles.marker} />
+                  <View style={[styles.marker]} />
+                  <Animated.View style={[styles.markerActive, colorOpacityStyle]} />
                 </Animated.View>
               </MapView.Marker>
             );
@@ -187,6 +196,9 @@ export default class screens extends Component {
                 <Text numberOfLines={1} style={styles.cardDescription}>
                   {marker.description}
                 </Text>
+                <Text numberOfLines={1} style={styles.cardCaption}>
+                  {marker.description}
+                </Text>
               </View>
             </View>
           ))}
@@ -211,17 +223,17 @@ const styles = StyleSheet.create({
     paddingRight: width - CARD_WIDTH,
   },
   card: {
-    padding: 10,
     elevation: 2,
     backgroundColor: "#FFF",
     marginHorizontal: 10,
     shadowColor: "#000",
     shadowRadius: 5,
-    shadowOpacity: 0.3,
+    shadowOpacity: .25,
     shadowOffset: { x: 2, y: -2 },
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
-    overflow: "hidden",
+    // overflow: "hidden",
+    borderRadius: 5,
   },
   cardImage: {
     flex: 3,
@@ -230,34 +242,51 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   textContent: {
-    flex: 1,
+    flex: 1.5,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 15,
   },
   cardtitle: {
-    fontSize: 12,
-    marginTop: 5,
+    fontSize: 16,
     fontWeight: "bold",
+    color: "#333",
   },
   cardDescription: {
     fontSize: 12,
-    color: "#444",
+    color: "#999",
+    paddingBottom: 15,
+  },
+  cardCaption: {
+    fontSize: 10,
+    color: "#999",
   },
   markerWrap: {
     alignItems: "center",
     justifyContent: "center",
   },
   marker: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "rgba(130,4,150, 0.9)",
-  },
-  ring: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "rgba(130,4,150, 0.3)",
+    width: 15,
+    height: 15,
+    borderRadius: 7.5,
+    backgroundColor: "black",
     position: "absolute",
     borderWidth: 1,
-    borderColor: "rgba(130,4,150, 0.5)",
+    borderColor: "white",
+  },
+  markerActive: {
+    width: 15,
+    height: 15,
+    borderRadius: 7.5,
+    backgroundColor: "#80df38",
+    borderWidth: 1,
+    borderColor: "white",
+  },
+  ring: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "rgba(0,0,0, 0.1)",
+    position: "absolute",
   },
 });
