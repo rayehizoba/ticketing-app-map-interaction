@@ -13,16 +13,16 @@ import {
 import MapView from "react-native-maps";
 
 const Images = [
-  { uri: "https://i.imgur.com/sNam9iJ.jpg" },
-  { uri: "https://i.imgur.com/N7rlQYt.jpg" },
-  { uri: "https://i.imgur.com/UDrH0wm.jpg" },
-  { uri: "https://i.imgur.com/Ka8kNST.jpg" }
+  { uri: "https://bit.ly/2ItD9rN" },
+  { uri: "https://bit.ly/2IQot9m" },
+  { uri: "https://i.ytimg.com/vi/8_96C9SDc1U/maxresdefault.jpg" },
+  { uri: "https://bit.ly/2IsDIWA" }
 ]
 
 const { width, height } = Dimensions.get("window");
 
-const CARD_HEIGHT = height / 3.75;
-const CARD_WIDTH = CARD_HEIGHT * 1.25;
+const CARD_HEIGHT = height / 4;
+const CARD_WIDTH = CARD_HEIGHT * 1.3;
 
 export default class screens extends Component {
   state = {
@@ -32,8 +32,9 @@ export default class screens extends Component {
           latitude: 45.524548,
           longitude: -122.6749817,
         },
-        title: "Best Place",
-        description: "This is the best place in Portland",
+        title: "Kanye West: Pablo tour XI",
+        description: "3987 Owings Mills BLVD, Baltimore MD",
+        dateTime: "26 April, 2018 21:00",
         image: Images[0],
       },
       {
@@ -41,8 +42,9 @@ export default class screens extends Component {
           latitude: 45.524698,
           longitude: -122.6655507,
         },
-        title: "Second Best Place",
-        description: "This is the second best place in Portland",
+        title: "Starboy World Tour",
+        description: "3987 Owings Mills BLVD, Baltimore MD",
+        dateTime: "26 April, 2018 21:00",
         image: Images[1],
       },
       {
@@ -50,8 +52,9 @@ export default class screens extends Component {
           latitude: 45.5230786,
           longitude: -122.6701034,
         },
-        title: "Third Best Place",
-        description: "This is the third best place in Portland",
+        title: "30 Billion concert",
+        description: "3987 Owings Mills BLVD, Baltimore MD",
+        dateTime: "26 April, 2018 21:00",
         image: Images[2],
       },
       {
@@ -59,8 +62,9 @@ export default class screens extends Component {
           latitude: 45.521016,
           longitude: -122.6561917,
         },
-        title: "Fourth Best Place",
-        description: "This is the fourth best place in Portland",
+        title: "The Dome. Abuja opening",
+        description: "3987 Owings Mills BLVD, Baltimore MD",
+        dateTime: "26 April, 2018 21:00",
         image: Images[3],
       },
     ],
@@ -115,7 +119,7 @@ export default class screens extends Component {
       ];
       const scale = this.animation.interpolate({
         inputRange,
-        outputRange: [1, 1.5, 1],
+        outputRange: [1, 2.5, 1],
         extrapolate: "clamp",
       });
       const opacity = this.animation.interpolate({
@@ -128,7 +132,12 @@ export default class screens extends Component {
         outputRange: [0, 1, 0],
         extrapolate: "clamp",
       });
-      return { scale, opacity, colorOpacity };
+      const cardScale = this.animation.interpolate({
+        inputRange,
+        outputRange: [.85, 1, .85],
+        extrapolate: "clamp",
+      });
+      return { scale, opacity, colorOpacity, cardScale };
     });
 
     return (
@@ -136,7 +145,7 @@ export default class screens extends Component {
         <MapView
           ref={map => this.map = map}
           initialRegion={this.state.region}
-          style={styles.container}
+          style={styles.mapView}
         >
           {this.state.markers.map((marker, index) => {
             const scaleStyle = {
@@ -164,45 +173,69 @@ export default class screens extends Component {
           })}
         </MapView>
 
-        <Animated.ScrollView
-          horizontal
-          scrollEventThrottle={1}
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={CARD_WIDTH}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    x: this.animation,
+        <View style={styles.scrollView}>
+          <View style={{height: 75, flexDirection: 'row', padding: 15}}>
+            <View style={{flex: 0.5, backgroundColor: '#efefef', height: 45, width: 45, borderRadius: 22}}>
+            </View>
+            <View style={{flex: 3}}>
+              <Text style={{fontWeight: 'bold', fontSize: 18}}>Welcome Thomas</Text>
+              <Text style={{color: '#aaa', fontSize: 14}} >Find out what's happening around you.</Text>
+            </View>
+          </View>
+          <Animated.ScrollView
+            style={{flex: 1, overflow: 'visible'}}
+            horizontal
+            scrollEventThrottle={1}
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={CARD_WIDTH}
+            snapToAlignment="start"
+            decelerationRate="fast"
+            onScroll={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      x: this.animation,
+                    },
                   },
                 },
-              },
-            ],
-            { useNativeDriver: true }
-          )}
-          style={styles.scrollView}
-          contentContainerStyle={styles.endPadding}
-        >
-          {this.state.markers.map((marker, index) => (
-            <View style={styles.card} key={index}>
-              <Image
-                source={marker.image}
-                style={styles.cardImage}
-                resizeMode="cover"
-              />
-              <View style={styles.textContent}>
-                <Text numberOfLines={1} style={styles.cardtitle}>{marker.title}</Text>
-                <Text numberOfLines={1} style={styles.cardDescription}>
-                  {marker.description}
-                </Text>
-                <Text numberOfLines={1} style={styles.cardCaption}>
-                  {marker.description}
-                </Text>
-              </View>
-            </View>
-          ))}
-        </Animated.ScrollView>
+              ],
+              { useNativeDriver: true }
+            )}
+            contentContainerStyle={[styles.endPadding, styles.startPadding]}
+          >
+            {this.state.markers.map((marker, index) => {
+              const cardScaleStyle = {
+                transform: [
+                  {
+                    scale: interpolations[index].cardScale,
+                  },
+                ],
+              };
+              return (
+                <Animated.View style={[styles.card, cardScaleStyle ]} key={index}>
+                  <View style={styles.cardImage}>
+                    <Image
+                      source={marker.image}
+                      style={{flex: 1}}
+                      resizeMode="cover"
+                    />
+                  </View>
+                  <View style={styles.textContent}>
+                    <Text numberOfLines={1} style={styles.cardtitle}>{marker.title}</Text>
+                    <Text numberOfLines={1} style={styles.cardDescription}>
+                      {marker.description}
+                    </Text>
+                    <Text numberOfLines={1} style={styles.cardCaption}>
+                      {marker.dateTime}
+                    </Text>
+                  </View>
+                </Animated.View>
+              );
+            })}
+          </Animated.ScrollView>
+        </View>
+
       </View>
     );
   }
@@ -212,12 +245,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  mapView: {
+    flex: 1.5,
+  },
   scrollView: {
-    position: "absolute",
-    bottom: 30,
-    left: 0,
-    right: 0,
-    paddingVertical: 10,
+    flex: 1,
+    // paddingVertical: 10,
+  },
+  startPadding: {
+    paddingLeft: 30,
   },
   endPadding: {
     paddingRight: width - CARD_WIDTH,
@@ -225,14 +261,12 @@ const styles = StyleSheet.create({
   card: {
     elevation: 2,
     backgroundColor: "#FFF",
-    marginHorizontal: 10,
     shadowColor: "#000",
     shadowRadius: 5,
     shadowOpacity: .25,
     shadowOffset: { x: 2, y: -2 },
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
-    // overflow: "hidden",
     borderRadius: 5,
   },
   cardImage: {
@@ -240,6 +274,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignSelf: "center",
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
+    overflow: 'hidden',
   },
   textContent: {
     flex: 1.5,
