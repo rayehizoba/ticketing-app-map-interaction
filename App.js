@@ -8,9 +8,16 @@ import {
   Animated,
   Image,
   Dimensions,
+  TouchableOpacity,
+  TouchableHighlight
 } from "react-native";
-
 import MapView from "react-native-maps";
+import avatar from "./assets/images/thanos.jpg";
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
+
+const statusBarHeight = getStatusBarHeight();
 
 const Images = [
   { uri: "https://bit.ly/2ItD9rN" },
@@ -142,6 +149,29 @@ export default class screens extends Component {
 
     return (
       <View style={styles.container}>
+        <View style={{
+          position: 'absolute', top: 0, 
+          height: 60 + statusBarHeight, 
+          zIndex: 2, flex: 1, width, paddingHorizontal: 15, paddingTop: statusBarHeight,
+          alignItems: 'center', flexDirection: 'row', justifyContent: "space-between"}} >
+          <LinearGradient
+            colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0)']}
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: 0,
+              height: 100,
+            }}
+          />
+          <TouchableOpacity>
+            <Ionicons name="ios-menu" size={30} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Ionicons name="ios-search" size={30} />
+          </TouchableOpacity>
+        </View>
+
         <MapView
           ref={map => this.map = map}
           initialRegion={this.state.region}
@@ -174,14 +204,23 @@ export default class screens extends Component {
         </MapView>
 
         <View style={styles.scrollView}>
-          <View style={{height: 75, flexDirection: 'row', padding: 15}}>
-            <View style={{flex: 0.5, backgroundColor: '#efefef', height: 45, width: 45, borderRadius: 22}}>
+          <TouchableHighlight>
+            <View style={{backgroundColor: '#f23535', width: 45, height: 45, borderRadius: 22, position: 'absolute',
+                right: 15, marginTop: -22, alignItems: 'center', justifyContent: 'center'}} >
+              <Ionicons name="ios-add" size={45} style={{color: 'white'}} />
+            </View>
+          </TouchableHighlight>
+
+          <View style={{height: 90, flexDirection: 'row', padding: 15, alignItems: "center", paddingBottom: 30}}>
+            <View style={{flex: 0.5, backgroundColor: '#efefef', height: 45, width: 45, borderRadius: 22, overflow: "hidden", marginRight: 15}}>
+              <Image source={avatar} style={{height: "100%", width: "100%"}} />
             </View>
             <View style={{flex: 3}}>
-              <Text style={{fontWeight: 'bold', fontSize: 18}}>Welcome Thomas</Text>
-              <Text style={{color: '#aaa', fontSize: 14}} >Find out what's happening around you.</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 20}}>Welcome Thanos</Text>
+              <Text style={{color: '#aaa', fontSize: 14, fontWeight: '100'}} >Find out what's happening around you.</Text>
             </View>
           </View>
+
           <Animated.ScrollView
             style={{flex: 1, overflow: 'visible'}}
             horizontal
@@ -277,6 +316,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
     overflow: 'hidden',
+    backgroundColor: '#efefef'
   },
   textContent: {
     flex: 1.5,
